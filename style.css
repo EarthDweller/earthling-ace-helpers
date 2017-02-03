@@ -1,0 +1,63 @@
+article pre {
+	border: 1px solid #BBBBBB;
+	border-radius: 3px;
+	margin: 5px 0 0;
+}
+
+ .ace-helpers-typograph-button
+,.ace-helpers-yandex-spell-button {
+	float: right;
+	margin-left: 0.3em;
+}
+
+.ace_gutter-layer {
+	width: 1em !important;
+}
+
+.ace_gutter-cell {
+	padding-left: 0.3em !important;
+}
+
+
+ .ace_marker-layer .ace-helpers-yandex-misspelled
+,.ace_marker-layer .ace-helpers-yandex-misspelled-double
+,.ace_marker-layer .ace-helpers-yandex-misspelled-cap
+,.ace_marker-layer .ace-helpers-yandex-misspelled-many
+{
+	position: absolute;
+	z-index: 2;
+	border-width: 1px;
+	border-bottom-style: solid;
+}
+
+ .ace_gutter-cell.ace-helpers-yandex-misspelled
+,.ace_gutter-cell.ace-helpers-yandex-misspelled-double
+,.ace_gutter-cell.ace-helpers-yandex-misspelled-cap
+,.ace_gutter-cell.ace-helpers-yandex-misspelled-many {
+	/*border-width: 1px;*/
+	/*border-style: solid;*/
+	/*margin: -1px 0;*/
+	box-shadow: 0 0 1px 1px inset;
+}
+
+.ace-helpers-yandex-misspelled {
+	color: red;
+	border-color: red;
+	background-color: rgba(113, 38, 38, 0.5);
+}
+
+.ace-helpers-yandex-misspelled-double {
+	color: yellow;
+	border-color: yellow;
+	background-color: rgba(255, 255, 0, 0.5);
+}
+
+.ace-helpers-yandex-misspelled-cap {
+	color: #3CA000;
+	border-color: #3CA000;
+	background-color: #3CA000;
+}
+
+.ace-helpers-yandex-misspelled-many {
+	background-color: rgba(255, 146, 41, 1);
+}

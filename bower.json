@@ -1,0 +1,38 @@
+{
+  "name": "earthling-ace-helpers",
+  "homepage": "https://bitbucket.org/T-Soloveychik/earthling-ace-helpers",
+  "authors": [
+    {
+      "name": "Timofey",
+      "email": "T-Soloveychik@ya.ru"
+    }
+  ],
+  "description": "Функции для работы с редактором ACE",
+  "main": [
+    "ajax-with-swal.js"
+  ],
+  "keywords": [
+    "jquery",
+    "sweetalert"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:T-Soloveychik/earthling-ace-helpers.git"
+  },
+  "ignore": [
+    "/.*",
+    "_config.yml",
+    "CNAME",
+    "composer.json",
+    "CONTRIBUTING.md",
+    "docs",
+    "js/tests",
+    "test-infra"
+  ],
+  "devDependencies": {
+    "jquery": "~2.1.4",
+    "sweetalert": "*",
+    "font-awesome": "fontawesome#^4.7",
+    "earthling-jquery-plugins": "git@bitbucket.org:/T-Soloveychik/earthling-jquery-plugins.git"
+  }
+}
