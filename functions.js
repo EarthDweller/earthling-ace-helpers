@@ -22,6 +22,23 @@ var aceHelpers = window.aceHelpers || {};
  */
 aceHelpers.addFunctions = function(editor) {
 
+	editor.replaceSpacesToNobrs = function ()
+	{
+		var selections = this.getSelection().getAllRanges();
+
+		var replaced;
+
+		for (var s = 0; s < selections.length; s++)
+		{
+			selectedTex = this.getSession().getDocument().getTextRange(selections[s]);
+
+			replaced = selectedTex.replace(/\ /gm ," ");
+
+			if (selectedTex != replaced)
+				this.getSession().replace(selections[s] ,replaced);
+		}
+	};
+
 	editor.addLineTag = function (tag)
 	{
 

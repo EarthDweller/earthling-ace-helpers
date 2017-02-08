@@ -54,19 +54,6 @@ aceHelpers.addKeyBindings = function(editor) {
 	cmdLine.commands.removeCommands(["find", "gotoline", "findall", "replace", "replaceall"]);
 */
 
-
-	// Типограф
-	editor.commands.addCommand({
-		name   : "typograph-selected/all" ,
-		bindKey: {
-			win: "Alt-Shift-t" ,
-			mac: "Alt-Shift-t"
-		} ,
-		exec   : function(editor) {
-			aceTipografButton.click()
-		}
-	});
-
 	// Menu
 	editor.commands.addCommand({
 		name   : "show-menu" ,
@@ -248,15 +235,15 @@ aceHelpers.addKeyBindings = function(editor) {
 		}
 	});
 
-	// Esc - fullWindowMode
-	editor.commands.addCommand({
-		name   : "full-window-mode" ,
-		bindKey: {
-			win: "Esc" ,
-			mac: "Esc"
-		} ,
-		exec   : function(editor) {
-			editor.fullWindowMode();
-		}
-	});
+	// // Esc - fullWindowMode
+	// editor.commands.addCommand({
+	// 	name   : "full-window-mode" ,
+	// 	bindKey: {
+	// 		win: "Esc" ,
+	// 		mac: "Esc"
+	// 	} ,
+	// 	exec   : function(editor) {
+	// 		editor.fullWindowMode();
+	// 	}
+	// });
 };
