@@ -1,21 +1,30 @@
-article pre {
+.ace-helpers-block pre {
 	border: 1px solid #BBBBBB;
 	border-radius: 3px;
 	margin: 5px 0 0;
 }
 
- .ace-helpers-typograph-button
-,.ace-helpers-yandex-spell-button {
-	float: right;
+.ace-helpers-block .ace-helpers-buttons {
+	margin-top: 3px;
+	text-align: right;
+}
+
+.ace-helpers-block .ace_search button {
+	font-size: 13px;
+	font-family: 'MS Shell Dlg \32', serif;
+}
+
+ .ace-helpers-button-typograph
+,.ace-helpers-button-yandex-spell {
 	margin-left: 0.3em;
 }
 
-.ace_gutter-layer {
-	width: 1em !important;
+.ace-helpers-editor .ace_gutter-cell {
+	padding-left: 0.3em !important;
 }
 
-.ace_gutter-cell {
-	padding-left: 0.3em !important;
+.ace-helpers-editor .ace_gutter-layer {
+	opacity: 0.3;
 }
 
 

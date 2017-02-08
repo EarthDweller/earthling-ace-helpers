@@ -100,16 +100,10 @@ aceHelpers.yandex.speller.replaceHtml = function (text)
 
 		var find, pattern, count = 0;
 
-		var regexp = /((?:title|placeholder|alt)\s*=\s*((?:\\)*(?:'|")))([\2]*)\2/miyu;
+		var regexp = /(?:title|placeholder|alt)\s*=\s*(?:\\)*(?:'|")([\2]*)\2/miy;
 
 		while (find = regexp.exec(textPart))
 		{
-			var msg = "Found " + find[0] + ".  ";
-
-			msg += "Next match starts at " + pattern.lastIndex;
-
-			document.getElementsByTagName("body")[0].ineerHTML += msg;
-
 			strReplace = strReplace.substr(0 ,find.length + regexp.lastIndex);
 
 			strReplace += find[3];
@@ -153,9 +147,9 @@ aceHelpers.yandex.speller.replaceHtml = function (text)
  *
  * к отправке Яндексу
  */
-aceHelpers.yandex.speller.prepareText = function (button)
+aceHelpers.yandex.speller.prepareText = function (text ,button)
 {
-	var text = button.editor.getValue()
+	var $button = $(button)
 
 		/** Максимальная длина - 10`000 символов */
 		, chunkLength = 10000
@@ -245,7 +239,6 @@ aceHelpers.yandex.speller.prepareText = function (button)
 		parts[row] = part;
 
 
-
 		/**
 		 * Подготовка для следующей части
 		 *
@@ -267,8 +260,8 @@ aceHelpers.yandex.speller.prepareText = function (button)
 		 *
 		 * Количество новых строк в данной части
 		 */
-		if ( part.match( regEOL ) )
-			row += part.match( regEOL ).length;
+		if (part.match(regEOL))
+			row += part.match(regEOL).length;
 
 		/**
 		 * Если данная часть была разорвана, то отметить
@@ -364,182 +357,90 @@ aceHelpers.yandex.speller.getSpellerOptionsSum = function (addOptions ,removeOpt
 /**
  * Отправка текста в Yandex.Speller
  *
- * Если нажать Ctrl, то НЕ будет отправлен текст, но будут взяты отметки из памяти
- *
- * @param {event|XMLHttpRequest} ajaxObj
- *
  * @param {HTMLButtonElement} button
  *
  * @return false - для того, чтобы не обрабатывалось нажатие на кнопку проверки
  */
-aceHelpers.yandex.speller.buttonSend = function (ajaxObj ,button)
+aceHelpers.yandex.speller.buttonSend = function (button)
 {
-	if (!button)
-		swal("Внимание" ,"У передан элемент кнопки!");
+	aceHelpers.yandex.speller.removeMarks(button);
 
-	if (!button.editor)
-		swal("Внимание" ,"У кнопки не указан параметр editor – поле с ACE радектором!");
+	var editor = button.editor;
 
-	var POST = true;
-
-	var $button = $(button);
-
-
-	/**
-	 * Если нажатие на кнопку проверки
-	 *
-	 * Запущена проверка
-	 */
-	if (ajaxObj instanceof Event)
+	if (button.spelling)
 	{
-		ajaxObj.preventDefault();
-
-		button = ajaxObj.target;
-
-		/**
-		 * Если нажат Ctrl, то
-		 * Сохранённый запрос, без AJAX!
-		 */
-		if (ajaxObj.ctrlKey)
-			POST = false;
-		/**
-		 * Иначе сбросить сохранённые ответы для запуска новых запросов
-		 */
-		else if (!button.partsMisspells || button.status === false)
-			button.partsMisspells = {};
-
-
-		/**
-		 * Если в статусе проверки, то убрать и завершить выполнение
-		 */
-		if (button.status === true)
-		{
-			$button.removeClass("operator-button-activated");
-
-			return aceHelpers.yandex.speller.removeMarks(button);
-		}
-
-
-		$button.addClass("operator-button-activated");
-
-
-		/**
-		 * Если ещё не было проверок, до создать пустые хранилища
-		 */
-		if (!button.ajax)
-			aceHelpers.yandex.speller.removeMarks(button);
-
-
-		button.status = true;
-
-		ajaxObj.rows = [];
+		button.spelling = false;
+		// editor.getSession().getSelection().off("changeSelection" ,aceHelpers.yandex.speller.onSelectionChange);
+		return;
 	}
 
+	var selections = editor.getSession().getSelection();
+	var ranges = selections.getAllRanges();
 
-
-	var text = button.editor.getValue();
-
-	var parts = this.prepareText(text);
-
-
-	/**
-	 * http://api.yandex.ru/speller/doc/dg/concepts/api-overview.xml
-	 */
-	var params = {
-		  uri: "https://speller.yandex.net/services/spellservice.json/checkText"
-		, faElem: $button.find("i.fa")
-		, onSuccess: function(data) {
-
-			var responseArray = eval("(" + ajaxObj.ajax.responseText + ")");
-
-			var button = ajaxObj.storage;
-
-			if (responseArray)
-			{
-				button.partsMisspells[ajaxObj.row] = responseArray;
-
-				aceHelpersMarkTextByYandexSpellerAnswer(responseArray ,ajaxObj.row ,button);
-
-				/**
-				 * Добавить функцию сравнения для вывода сообщений об ошибках
-				 */
-				//button.editor.on("changeSelection", function() {
-				//	aceYandexSpellMisspelled();
-				//});
-			}
-
-			/**
-			 * Пока не будут отправлены все части теста, повторять
-			 */
-			if (aceSendTextToYandexSpeller(ajaxObj ,button))
-			{
-			}
-			else
-			{
-			}
-		}
-	};
-
-	for (var obj in ajaxObj.parts) if (ajaxObj.parts.hasOwnProperty(obj))
+	var data = [];
+	for (var i = 0; i < ranges.length; i++)
 	{
-		if (ajaxObj.rows.indexOf(obj) !== -1)
-			continue;
-
-		ajaxObj.rows[ajaxObj.rows.length] = obj;
-
-		ajaxObj.row = obj;
-
-		ajaxObj.data = "text=" + encodeURIComponent(ajaxObj.parts[ajaxObj.row]);
-
-		/**
-		 * Добавить параметры проверки
-		 */
-		ajaxObj.data += "&options=" + aceHelpers.yandex.speller.getSpellerOptionsSum();
-
-
-		/**
-		 * Язык(и) проверки
-		 */
-		ajaxObj.data += "&lang=ru,en";
-
-		if (POST)
-		{
-			params.text =
-
-			ajaxWithSwal(params);
-		}
-		else
-		{
-			/**
-			 * Сохранённый ответ для тестов
-			 */
-			var testResponse = eval( '([{"code":1,"pos":248,"row":16,"col":44,"len":8,"word":"\u0430\u0442\u0440\u0438\u0431\u0443\u0442\u0442","s":["\u0430\u0442\u0440\u0438\u0431\u0443\u0442"]},{"code":3,"pos":325,"row":23,"col":3,"len":6,"word":"\u041f\u0420\u0430\u0432\u0434\u0430","s":["\u041f\u0440\u0430\u0432\u0434\u0430"]},{"code":1,"pos":359,"row":27,"col":3,"len":21,"word":"\u042d\u043a\u0432\u0430\u043d\u0438\u0437\u0438\u0437\u0430\u0442\u043e\u0440\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435","s":[]},{"code":1,"pos":417,"row":31,"col":16,"len":5,"word":"memos","s":["mamas","memo"]},{"code":2,"pos":547,"row":39,"col":13,"len":2,"word":"\u043d\u0430","s":[]},{"code":1,"pos":571,"row":41,"col":10,"len":7,"word":"\u0430\u0448\u0438\u0431\u043a\u043e\u0439","s":["\u043e\u0448\u0438\u0431\u043a\u043e\u0439"]}])' );
-
-
-			if (!button.partsMisspells)
-				aceHelpers.yandex.speller.setMarkersByResponse(testResponse ,'0' ,button);
-			/**
-			 * Если сохранены ошибки
-			 */
-			else
-			{
-				for (var row in button.partsMisspells)
-				{
-					if (!button.partsMisspells.hasOwnProperty(row))
-						continue;
-
-					aceHelpers.yandex.speller.setMarkersByResponse(button.partsMisspells[row] ,row ,button);
-				}
-			}
-		}
+		textRange = editor.getSession().getDocument().getTextRange(ranges[i]).trim();
+		if (textRange)
+			data[i] = {
+				  text: aceHelpers.yandex.speller.prepareText(textRange ,button)
+				, selection: ranges[i]
+			};
 	}
 
+	if (data.length == 0 && editor.getValue().trim())
+		data[0] = {
+			  text: aceHelpers.yandex.speller.prepareText(editor.getValue() ,button)
+			, selection: 0
+		};
 
-	/**
-	 * Если нет ошибок, то запомнить текст и указать, что проверка выключена
-	 */
-	if (button.markers.length == 0)
-		button.text = text;
+	if (data.length == 0)
+		return;
+
+	// editor.getSession().getSelection().on("changeSelection" ,aceHelpers.yandex.speller.onSelectionChange);
+
+	button.spelling = true;
+
+	var $fa = $(button).find("i.fa");
+
+	var countResponses = 0;
+	for (i = 0; i < data.length; i++)
+	{
+		/**
+		 * http://api.yandex.ru/speller/doc/dg/concepts/api-overview.xml
+		 */
+		$.ajax("https://speller.yandex.net/services/spellservice.json/checkText" ,{
+			  method : "POST"
+			, data : {text: data[i].text[0]}
+			, context : data[i]
+			, beforeSend: function() {
+			  	if (!/circle-o-notch/.test($fa.attr("class")))
+			    {
+					$fa.data("fa" ,$fa.attr("class"));
+
+					$fa.attr("class",$fa.attr("class").replace(/(fa fa)-[^\s]+/,"$1-circle-o-notch"));
+					$fa.addClass("fa-spin");
+			    }
+			}
+			, error: function() {
+				swal("Ошибка" ,"Не удалось получить ответ от Яндекс.Спеллера")
+			}
+			, success: function(response) {
+
+			  	if (!response)
+			  		return;
+
+				this.response = response;
+
+				aceHelpers.yandex.speller.setMarkersByResponse(button ,this);
+			}
+			, complete: function() {
+				countResponses++;
+				if (countResponses == data.length)
+					$fa.attr("class" ,$fa.data("fa"));
+			}
+		});
+	}
 
 	return false;
 };
@@ -547,8 +448,6 @@ aceHelpers.yandex.speller.buttonSend = function (ajaxObj ,button)
 
 aceHelpers.yandex.speller.removeMarks = function (button)
 {
-	button.status = false;
-
 	/**
 	 * Очистить сохранённое количество ошибок
 	 */
@@ -574,27 +473,24 @@ aceHelpers.yandex.speller.removeMarks = function (button)
 	/**
 	 * Убрать Все выделения
 	 */
-	if ( button.markers )
-		for ( var m = 0 ; m < button.markers.length ; m++ )
+	if (button.markers)
+		for (var m = 0; m < button.markers.length; m++)
 		{
-			session.removeMarker( button.markers[m] );
+			session.removeMarker(button.markers[m]);
 		}
 
 	button.markers = [];
-
 };
 
 
 
 
 /**
- * @param {Array} responseArray массив с объектами описывающими ошибки
+ * @param {HTMLButtonElement} button
  *
- * @param {int|String} nowRow строка начала отсчёта (если несколько частей по 10 тыс символов)
- *
- * @param {HTMLButtonElement} button массив хранящий параметры запросов
+ * @param {Array} data массив с объектами описывающими ошибки
  */
-aceHelpers.yandex.speller.setMarkersByResponse = function (responseArray ,nowRow ,button)
+aceHelpers.yandex.speller.setMarkersByResponse = function (button ,data)
 {
 	var mistakes = aceHelpers.yandex.speller.getMarksClasses();
 
@@ -602,20 +498,20 @@ aceHelpers.yandex.speller.setMarkersByResponse = function (responseArray ,nowRow
 
 	var Range = ace.require('ace/range').Range;
 
-	var strike = nowRow.match(/(\d+)(?:(?::)(\d+))?/);
-
-	var startRow = +strike[1];
-
-	var startCol = 0;
-	if (strike[2])
-		startCol = +strike[2];
+	var startRow = 0;
+	var startColumn = 0;
+	if (data.selection)
+	{
+		startRow = data.selection.start.row;
+		startColumn = data.selection.start.column;
+	}
 
 	/**
 	 * Перебор переданных в ответе значений
 	 */
-	for (var r = 0; r < responseArray.length; r++)
+	for (var r = 0; r < data.response.length; r++)
 	{
-		var values = responseArray[r];
+		var values = data.response[r];
 
 		var code = values.code;
 
@@ -624,7 +520,7 @@ aceHelpers.yandex.speller.setMarkersByResponse = function (responseArray ,nowRow
 		/**
 		 * Если не нулевая строка, то сбросить значение смещения в строке
 		 */
-		if (startCol && values.row)
+		if (startColumn && values.row)
 			startCol = 0;
 
 		/** Строка + строка обрабатываемой части */
@@ -632,7 +528,7 @@ aceHelpers.yandex.speller.setMarkersByResponse = function (responseArray ,nowRow
 
 
 		/** Начальная позиция в строке */
-		var col = +values.col + startCol;
+		var col = +values.col + startColumn;
 
 
 		/** Создать диапазон */
@@ -643,35 +539,45 @@ aceHelpers.yandex.speller.setMarkersByResponse = function (responseArray ,nowRow
 		var range = new Range(row ,col ,row ,end);
 
 
-
 		/** Запомнить параметры выделения */
 		button.decoredGutters.push([row ,mistakes[index]]);
 
 		/** Добавить выделения на нумерации строк */
 		session.addGutterDecoration(row ,mistakes[index]);
 
-
 		/**
 		 * Добавить выделения в текст
 		 */
-		button.markers[button.markers.length]
-			= session.addMarker(range ,mistakes[index] ,function() { alert("test ya speller in object"); } ,false);
+		var markerID = session.addMarker(range ,mistakes[index] ,"error" ,true);
 
-
-		button.markers[button.markers.length].onclick = function() {
-			alert("test ya for object")
-		};
+		/**
+		 * Запомнить на кнопке ID маркера:
+		 */
+		button.markers.push(markerID);
 
 
 		/**
-		 * Записать данные об ошибке
+		 * Добавить событие на маркер
 		 */
-		if (!button.misspells[row])
-			button.misspells[row] = [];
-
-		button.misspells[row][button.misspells[row].length]
-			= [range ,mistakes[index] ,values.s ,button.markers[button.markers.length]];
+		button.markers[button.markers.length - 1].onclick = function() {
+			alert("test ya for object")
+		};
 	}
+};
+
+
+
+
+/**
+ * @param {Object} event
+ * @param {Object} data
+ *
+ * @TODO: Доделать событие выведения вариантов замены ошибки
+ */
+aceHelpers.yandex.speller.onSelectionChange = function (event ,data)
+{
+	console.log('data');
+	console.log( data );
 };
 
 
