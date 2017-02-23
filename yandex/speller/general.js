@@ -371,6 +371,7 @@ aceHelpers.yandex.speller.buttonSend = function (button)
 	{
 		button.spelling = false;
 		// editor.getSession().getSelection().off("changeSelection" ,aceHelpers.yandex.speller.onSelectionChange);
+		editor.focus();
 		return;
 	}
 
@@ -402,6 +403,11 @@ aceHelpers.yandex.speller.buttonSend = function (button)
 	button.spelling = true;
 
 	var $fa = $(button).find("i.fa");
+
+	console.log('data');
+	console.log( data );
+
+	return;
 
 	var countResponses = 0;
 	for (i = 0; i < data.length; i++)
@@ -437,7 +443,10 @@ aceHelpers.yandex.speller.buttonSend = function (button)
 			, complete: function() {
 				countResponses++;
 				if (countResponses == data.length)
+				{
 					$fa.attr("class" ,$fa.data("fa"));
+					editor.focus();
+				}
 			}
 		});
 	}

@@ -163,6 +163,18 @@ aceHelpers.addKeyBindings = function(editor) {
 		}
 	});
 
+	// Ctrl-Alt-t - inline Tag
+	editor.commands.addCommand({
+		name   : "wrap-or-add-to-text-by-inline-tag" ,
+		bindKey: {
+			win: "Ctrl-Alt-T" ,
+			mac: "Ctrl-Alt-T"
+		} ,
+		exec   : function(editor) {
+			editor.addLineTag();
+		}
+	});
+
 	// Alt-u - underline
 	editor.commands.addCommand({
 		name   : "wrap-text-by-underline" ,

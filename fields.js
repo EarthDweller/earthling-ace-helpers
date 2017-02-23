@@ -154,8 +154,11 @@ aceHelpers.replaceFields = function (block)
 
 
 
-			aceHelpers.addFunctions(editor);
-			aceHelpers.addKeyBindings(editor);
+			if (aceHelpers.addFunctions)
+				aceHelpers.addFunctions(editor);
+
+			if (aceHelpers.addKeyBindings)
+				aceHelpers.addKeyBindings(editor);
 
 
 
@@ -184,6 +187,16 @@ aceHelpers.replaceFields = function (block)
 			if ($field.data("ace-mode"))
 				editor.setOption("mode" ,"ace/mode/" + $field.data("ace-mode"));
 
+			if ($field.data("ace-readonly"))
+				editor.setOption("readOnly" ,true);
+
+			if ($field.data("ace-gutter") == false)
+				editor.setOption("showGutter" ,false);
+
+			if ($field.data("ace-select-all"))
+				editor.getSelection().on("changeCursor" ,function(event ,selection) {
+					selection.selectAll();
+				});
 
 			if ($field.data("buttons-all") || $field.data("ace-buttons"))
 				aceHelpers.addButtons($field);

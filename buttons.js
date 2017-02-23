@@ -59,7 +59,7 @@ aceHelpers.buttons = {
 		  class: "ace-helpers-button-nobr"
 		, function: 'this.editor.replaceSpacesToNobrs'
 		, arguments: '()'
-		, fa: "fa-link"
+		, fa: "fa-stop"
 		, title: "Alt + N — Заменить все пробелы в тексте или выделенном фрагменте(ах) на неразрывные пробелы"
 		, keybind: function(editor) {
 			editor.commands.addCommand({
@@ -80,7 +80,7 @@ aceHelpers.buttons = {
 		, function: 'this.editor.addLineTag'
 		, arguments: '(\'nobr\')'
 		, fa: "fa-code"
-		, title: "Alt + Shift + N — Обернуть текст или выделенном фрагмента(ах) в тег <nobr></nobr>"
+		, title: "Alt + Shift + N — Обернуть текст или выделенный фрагмент(ы) в тег <nobr>"
 		, keybind: function(editor) {
 			editor.commands.addCommand({
 				name   : "wrap-to-nobr-tag-selected/all" ,
@@ -144,9 +144,6 @@ aceHelpers.addButtons = function ($field)
 		$button
 			.prop("editor" ,editor)
 			.data("editor" ,editor);
-
-		console.log('buttonName');
-		console.log( buttonName );
 
 		editor.buttons[buttonName] = $button;
 
