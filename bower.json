@@ -1,6 +1,6 @@
 {
   "name": "earthling-ace-helpers",
-  "homepage": "https://bitbucket.org/T-Soloveychik/earthling-ace-helpers",
+    "homepage": "https://github.com/EarthDweller/earthling-ace-helpers",
   "authors": [
     {
       "name": "Timofey",
@@ -17,7 +17,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:T-Soloveychik/earthling-ace-helpers.git"
+    "url": "git@github.com:EarthDweller/earthling-ace-helpers.git"
   },
   "ignore": [
     "/.*",
@@ -33,6 +33,6 @@
     "jquery": "~2.1.4",
     "sweetalert": "*",
     "font-awesome": "fontawesome#^4.7",
-    "earthling-jquery-plugins": "git@bitbucket.org:/T-Soloveychik/earthling-jquery-plugins.git"
+    "earthling-jquery-plugins": "git@github.com:EarthDweller/earthling-jquery-plugins.git"
   }
 }

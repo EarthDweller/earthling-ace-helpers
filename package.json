@@ -2,10 +2,10 @@
     "name": "earthling-ace-helpers",
     "version": "0.2.3",
     "description": "Функции для работы с редактором ACE",
-    "homepage": "https://bitbucket.org/T-Soloveychik/earthling-ace-helpers",
+    "homepage": "https://github.com/EarthDweller/earthling-ace-helpers",
     "repository": {
         "type": "git",
-        "url": "git@bitbucket.org:/T-Soloveychik/earthling-ace-helpers.git"
+        "url": "git@github.com:EarthDweller/earthling-ace-helpers.git"
     },
     "authors": [
         {
